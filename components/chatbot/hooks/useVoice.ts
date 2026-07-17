@@ -13,6 +13,9 @@ export function useVoice() {
   const chatStateRef = useRef(chatState);
   chatStateRef.current = chatState;
 
+  const sendMessageRef = useRef(sendMessage);
+  sendMessageRef.current = sendMessage;
+
   // Initialize Speech Recognition & Synthesis
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -36,7 +39,7 @@ export function useVoice() {
           const transcript = event.results[0][0].transcript;
           if (transcript) {
             console.log("[useVoice] Speech recognized:", transcript);
-            sendMessage(transcript, true);
+            sendMessageRef.current(transcript, true);
           }
         };
 
@@ -60,9 +63,19 @@ export function useVoice() {
         };
 
         recognitionRef.current = recognition;
+
+        return () => {
+          recognition.onstart = null;
+          recognition.onresult = null;
+          recognition.onerror = null;
+          recognition.onend = null;
+          try {
+            recognition.abort();
+          } catch (e) {}
+        };
       }
     }
-  }, [sendMessage, setChatState]);
+  }, [setChatState]);
 
   // Handle TTS (Text-to-Speech) when a new model response arrives
   useEffect(() => {

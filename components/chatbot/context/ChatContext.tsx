@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Message, ChatState } from "../types";
 import { sendChatMessage } from "../services/chatService";
 
@@ -36,7 +36,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ]);
   }, []);
 
-  const clearChat = () => {
+  const clearChat = useCallback(() => {
     setMessages([
       {
         id: "welcome",
@@ -46,9 +46,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     ]);
     setChatState("idle");
-  };
+  }, []);
 
-  const sendMessage = async (content: string, isVoice = false) => {
+  const sendMessage = useCallback(async (content: string, isVoice = false) => {
     if (!content.trim()) return;
 
     const userMessage: Message = {
@@ -93,7 +93,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-  };
+  }, [messages, isVoiceEnabled]);
 
   return (
     <ChatContext.Provider

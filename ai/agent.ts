@@ -36,44 +36,56 @@ export async function runAgent(
     },
   });
 
+  let apiCallCount = 0;
+
   console.log(`[AGENT] Sending message to Gemini (${modelName}): "${newMessage}"`);
+  apiCallCount++;
+  console.log(`[AGENT] [Gemini Request #${apiCallCount}] Initial query`);
   let result = await chat.sendMessage({ message: newMessage });
 
   let functionCalls = result.functionCalls;
   
   while (functionCalls && functionCalls.length > 0) {
-    const call = functionCalls[0];
-    console.log(`[AGENT] Function call requested: ${call.name}`, call.args);
+    apiCallCount++;
+    console.log(`[AGENT] Parallel execution of ${functionCalls.length} function calls requested.`);
 
-    let toolResult: any;
+    const responses = await Promise.all(
+      functionCalls.map(async (call) => {
+        console.log(`[AGENT] Function call requested: ${call.name}`, call.args);
 
-    if (call.name === "checkAvailability") {
-      toolResult = await checkAvailability(call.args as any);
-    } else if (call.name === "bookAppointment") {
-      toolResult = await bookAppointment(call.args as any);
-    } else {
-      toolResult = { error: `Tool ${call.name} not found.` };
-    }
+        let toolResult: any;
 
-    console.log(`[AGENT] Tool ${call.name} response:`, toolResult);
+        if (call.name === "checkAvailability") {
+          toolResult = await checkAvailability(call.args as any);
+        } else if (call.name === "bookAppointment") {
+          toolResult = await bookAppointment(call.args as any);
+        } else {
+          toolResult = { error: `Tool ${call.name} not found.` };
+        }
 
-    // Send the function execution output back to the model
-    result = await chat.sendMessage({
-      message: [
-        {
+        console.log(`[AGENT] Tool ${call.name} response:`, toolResult);
+
+        return {
           functionResponse: {
             name: call.name,
+            id: call.id, // Strictly map the function call ID
             response: toolResult,
           },
-        },
-      ],
+        };
+      })
+    );
+
+    console.log(`[AGENT] [Gemini Request #${apiCallCount}] Sending all function responses to Gemini`);
+    // Send all function execution outputs back to the model in one go
+    result = await chat.sendMessage({
+      message: responses,
     });
 
-    // Check if Gemini wants to call another tool or is ready to speak
+    // Check if Gemini wants to call more tools
     functionCalls = result.functionCalls;
   }
 
   const finalResponse = result.text || "";
-  console.log(`[AGENT] Final response generated: "${finalResponse}"`);
+  console.log(`[AGENT] Final response generated after ${apiCallCount} Gemini API requests: "${finalResponse}"`);
   return finalResponse;
 }

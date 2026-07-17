@@ -1,18 +1,17 @@
-import { SchemaType } from "@google/generative-ai";
 import { getBookings } from "../../lib/sheets";
 
 export const checkAvailabilityDeclaration = {
   name: "checkAvailability",
   description: "Check if a specific date and time slot is available for an appointment.",
   parameters: {
-    type: SchemaType.OBJECT,
+    type: "OBJECT",
     properties: {
       date: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The preferred date for the appointment (e.g. '15 July')."
       },
       time: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The preferred time for the appointment (e.g. '3:00 PM')."
       }
     },

@@ -1,4 +1,3 @@
-import { SchemaType } from "@google/generative-ai";
 import { checkAvailability } from "./checkAvailability";
 import { saveBookingToSheet } from "./googleSheets";
 import { sendPatientConfirmation } from "./sendPatientEmail";
@@ -8,30 +7,30 @@ export const bookAppointmentDeclaration = {
   name: "bookAppointment",
   description: "Book an appointment for a patient by collecting all details and logging them. Only call this after confirming with the user that they want to book this slot.",
   parameters: {
-    type: SchemaType.OBJECT,
+    type: "OBJECT",
     properties: {
       name: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The full name of the patient."
       },
       email: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The email address of the patient."
       },
       phone: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The phone number of the patient."
       },
       date: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The preferred date of the appointment (e.g. '15 July')."
       },
       time: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "The preferred time of the appointment (e.g. '3:00 PM')."
       },
       reason: {
-        type: SchemaType.STRING,
+        type: "STRING",
         description: "Optional reason for the dental visit."
       }
     },

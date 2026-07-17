@@ -39,7 +39,7 @@ Open `.env.local` in your editor and fill out the values:
 | Variable | Description | Where to Get / How to Configure |
 |---|---|---|
 | `GEMINI_API_KEY` | Google Gemini API Key | Go to [Google AI Studio](https://aistudio.google.com/), click **Get API Key**, and generate a key starting with `AIzaSy`. |
-| `GEMINI_MODEL` | The LLM model engine | Defaults to `gemini-2.5-flash`. |
+| `GEMINI_MODEL` | The LLM model engine | Defaults to `gemini-3.5-flash`. |
 | `GOOGLE_SHEET_ID` | The unique ID of your Google Sheet | Open your Google Sheet. Copy the long ID string from the browser URL: `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`. |
 | `GOOGLE_SERVICE_ACCOUNT` | Service account credential JSON | **Must be single-line**. Create a service account in Google Cloud Console, enable the Google Sheets API, generate a JSON Key, collapse it to a single line, and wrap it in single quotes (`'{"type": ...}'`). |
 | `RESEND_API_KEY` | Resend API Key | Sign up on [Resend](https://resend.com/), go to API Keys, and generate a key starting with `re_`. |
